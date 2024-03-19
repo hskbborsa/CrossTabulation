@@ -40,6 +40,16 @@ def main():
                 default=list(df[col].unique())   # Tüm seçenekler varsayılan olarak seçildi
             )
 
+        # Diğer seçenekleri dinamik olarak güncelleyin
+        for selected_col, selected_values in selected_criteria.items():
+            for col in categorical_columns:
+                if col != selected_col:  # Seçilen sütunu güncelleme
+                    selected_criteria[col] = st.sidebar.multiselect(
+                        label=f"Select {col}",
+                        options=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Diğer seçenekleri güncelle
+                        default=list(df[df[selected_col].isin(selected_values)][col].unique())   # Tüm seçenekler varsayılan olarak seçildi
+                    )
+
         # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
         all_columns = df.columns.tolist()
         show_columns = st.sidebar.multiselect(
@@ -60,7 +70,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
 #side bar: switcher
