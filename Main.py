@@ -4,7 +4,7 @@ import pandas as pd
 from query import *
 
 #set page
-st.set_page_config(page_title="Dashboard",page_icon="🌓",layout="wide")
+st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 
 UI()
 
