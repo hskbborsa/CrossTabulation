@@ -34,23 +34,46 @@ def main():
 
         categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
+        # Seçim kriterleri için kategorik sütunları oluşturun
         selected_criteria = {}
         for col in categorical_columns:
             selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=list(df[col].unique()),  # 'All' option removed
-                default=list(df[col].unique())   # All options selected by default
+                options=list(df[col].unique()),  # 'All' seçeneği kaldırıldı
+                default=list(df[col].unique())   # Tüm seçenekler varsayılan olarak seçildi
             )
 
-        # Filter DataFrame based on selected criteria
+        # Diğer seçenekleri dinamik olarak güncelleyin
+        for selected_col, selected_values in selected_criteria.items():
+            for col in categorical_columns:
+                if col != selected_col:  # Seçilen sütunu güncelleme
+                    selected_criteria[col] = st.sidebar.multiselect(
+                        label=f"Select {col}",
+                        options=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Diğer seçenekleri güncelle
+                        default=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Tüm seçenekler varsayılan olarak seçildi
+                    )
+
+        # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
+        all_columns = df.columns.tolist()
+        show_columns = st.sidebar.multiselect(
+            label="Select columns to show",
+            options=all_columns,
+            default=all_columns  # Tüm sütunlar varsayılan olarak seçildi
+        )
+
+        # DataFrame'i seçilen kriterlere göre filtreleyin
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
             filtered_df = filtered_df[filtered_df[col].isin(values)]
+
+        # Yalnızca belirli sütunları gösterin
+        filtered_df = filtered_df[show_columns]
 
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
+
 
 #side bar: switcher
 gender=st.sidebar.multiselect(
