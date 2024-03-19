@@ -33,17 +33,27 @@ comment=st.sidebar.multiselect(
     )
 
 
+
 uploaded_file = st.sidebar.file_uploader("Choose a file")
+
 if uploaded_file is not None:
-   #read csv
-   #df1=pd.read_csv(uploaded_file)
-
-   #read xls or xlsx
-   df1=pd.read_excel(uploaded_file)
+    if uploaded_file.name.endswith(('.xls', '.xlsx')):
+        df = pd.read_excel(uploaded_file)
+    elif uploaded_file.name.endswith('.csv'):
+        df = pd.read_csv(uploaded_file)
+    else:
+        st.warning("Unsupported file format. Please upload a CSV or Excel file.")
+        df = None
 else:
-   st.warning("you need to upload a csv or excel file.")
+    st.warning("No file uploaded. Using default CSV file.")
+    df = pd.read_csv("results.csv")
 
-filename=uploaded_file.name
+if df is not None:
+    st.write("File loaded successfully.")
+    # Do something with the dataframe if needed
+    # For example, display the dataframe
+    st.write(df)
+
 
 
 #get selected item
