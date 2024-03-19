@@ -12,8 +12,7 @@ UI()
 #result=viewData()
 #df=pd.DataFrame(result,columns=["name","gender","history","geography","kiswahili","civics","maths","total","average","grade","comment","rank","stream","id"])
 
-import streamlit as st
-import pandas as pd
+
 
 def load_data(file):
     if file is not None:
@@ -65,7 +64,23 @@ if __name__ == "__main__":
 
 
 
+#side bar: switcher
+gender=st.sidebar.multiselect(
+    label="Select Gender",
+    options=df["gender"].unique(),
+    default=df["gender"].unique(),
+    )
 
+stream=st.sidebar.multiselect(
+    label="select Stream",
+    options=df["stream"].unique(),
+    default=df["stream"].unique(),
+    )
+comment=st.sidebar.multiselect(
+    label="select Comment",
+    options=df["comment"].unique(),
+     default=df["comment"].unique(),
+    )
 
 
 #get selected item
