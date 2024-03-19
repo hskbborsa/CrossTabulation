@@ -8,9 +8,6 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
-import streamlit as st
-import pandas as pd
-
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -25,13 +22,6 @@ def load_data(file):
         df = pd.read_csv("results.csv")
     return df
 
-def get_categorical_columns(df):
-    categorical_columns = []
-    for col in df.columns:
-        if df[col].dtype == 'object':
-            categorical_columns.append(col)
-    return categorical_columns
-
 def main():
     uploaded_file = st.sidebar.file_uploader("Choose a file")
     df = load_data(uploaded_file)
@@ -39,21 +29,24 @@ def main():
     if df is not None:
         st.write("File loaded successfully.")
 
-        categorical_columns = get_categorical_columns(df)
+        categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
-        first_criteria = st.sidebar.selectbox("Select First Criteria", options=categorical_columns)
-        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=df.columns)
+        selected_criteria = {}
+        for col in categorical_columns:
+            selected_criteria[col] = st.sidebar.multiselect(
+                label=f"Select {col}",
+                options=df[col].unique(),
+                default=df[col].unique()
+            )
 
-        # Apply filters
         filtered_df = df.copy()
-        if first_criteria:
-            filtered_df = filtered_df[filtered_df[first_criteria].isin(df[first_criteria].unique())]
+        for col, values in selected_criteria.items():
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
-
 
 #side bar: switcher
 gender=st.sidebar.multiselect(
