@@ -12,8 +12,6 @@ UI()
 #result=viewData()
 #df=pd.DataFrame(result,columns=["name","gender","history","geography","kiswahili","civics","maths","total","average","grade","comment","rank","stream","id"])
 
-
-
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -39,28 +37,20 @@ def main():
 
         selected_criteria = {}
         for col in categorical_columns:
-            selected_values = st.sidebar.multiselect(
+            selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
                 options=df[col].unique(),
-                default=df[col].unique(),
+                default=df[col].unique()
             )
-            selected_criteria[col] = selected_values
-
-        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=[''] + df.columns.tolist())
 
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
             filtered_df = filtered_df[filtered_df[col].isin(values)]
 
-        if second_criteria:
-            filtered_df = filtered_df[filtered_df[second_criteria].isin(df[second_criteria].unique())]
-
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
-
-
 
 
 
