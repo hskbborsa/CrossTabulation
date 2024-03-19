@@ -54,7 +54,7 @@ def main():
                         label=f"Select {col}",
                         options=available_options,
                         default=available_options,
-                        key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
+                        key=f"{selected_col}_{col}_multiselect"  # Benzersiz bir key parametresi ekle
                     )
 
         filtered_df = df.copy()
@@ -65,6 +65,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 #side bar: switcher
