@@ -45,16 +45,19 @@ def main():
             )
             selected_criteria[col] = selected_values
 
-        # Diğer seçenekleri güncelleyin
+        # Diğer seçim kutularının içeriğini güncelleyin
         for selected_col in selected_criteria.keys():
+            available_options = df[df[selected_col].isin(selected_criteria[selected_col])]
             for col in categorical_columns:
                 if col != selected_col:
-                    available_options = df[df[selected_col].isin(selected_criteria[selected_col])][col].unique()
+                    available_options = available_options[available_options[col].isin(selected_criteria[col])]
+            for col in categorical_columns:
+                if col != selected_col:
                     selected_criteria[col] = st.sidebar.multiselect(
                         label=f"Select {col}",
-                        options=available_options,
-                        default=available_options,
-                        key=f"{selected_col}_{col}_multiselect"  # Benzersiz bir key parametresi ekle
+                        options=available_options[col].unique(),
+                        default=available_options[col].unique(),
+                        key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
                     )
 
         filtered_df = df.copy()
@@ -65,6 +68,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
