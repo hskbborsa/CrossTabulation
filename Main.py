@@ -5,8 +5,8 @@ from query import *
 
 #set page
 st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
-
 UI()
+#####
 
 def load_data(file):
     if file is not None:
@@ -33,16 +33,17 @@ def main():
 
         selected_criteria = {}
         for col in categorical_columns:
-            selected_criteria[col] = st.sidebar.selectbox(
+            selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=['All'] + list(df[col].unique()) # 'All' option added
+                options=['All'] + list(df[col].unique()),  # 'All' option added
+                default=['All']  # 'All' option selected by default
             )
 
         # Filter DataFrame based on selected criteria
         filtered_df = df.copy()
-        for col, value in selected_criteria.items():
-            if value != 'All': # 'All' option selected, don't filter
-                filtered_df = filtered_df[filtered_df[col] == value]
+        for col, values in selected_criteria.items():
+            if 'All' not in values:  # 'All' option selected, don't filter
+                filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
