@@ -26,13 +26,6 @@ def load_data(file):
         df = pd.read_csv("results.csv")
     return df
 
-def get_categorical_columns(df):
-    categorical_columns = []
-    for col in df.columns:
-        if df[col].dtype == 'object':
-            categorical_columns.append(col)
-    return categorical_columns
-
 def main():
     uploaded_file = st.sidebar.file_uploader("Choose a file")
     df = load_data(uploaded_file)
@@ -40,21 +33,24 @@ def main():
     if df is not None:
         st.write("File loaded successfully.")
 
-        categorical_columns = get_categorical_columns(df)
+        categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
-        first_criteria = st.sidebar.selectbox("Select First Criteria", options=categorical_columns)
-        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=df.columns)
+        selected_criteria = {}
+        for col in categorical_columns:
+            selected_criteria[col] = st.sidebar.multiselect(
+                label=f"Select {col}",
+                options=df[col].unique(),
+                default=df[col].unique()
+            )
 
-        # Apply filters
         filtered_df = df.copy()
-        if first_criteria:
-            filtered_df = filtered_df[filtered_df[first_criteria].isin(df[first_criteria].unique())]
+        for col, values in selected_criteria.items():
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
-
 
 
 
@@ -78,25 +74,6 @@ comment=st.sidebar.multiselect(
     options=df["comment"].unique(),
      default=df["comment"].unique(),
     )
-
-
-
-uploaded_file = st.sidebar.file_uploader("Choose a file")
-
-if uploaded_file is not None:
-    if uploaded_file.name.endswith(('.xls', '.xlsx')):
-        df = pd.read_excel(uploaded_file)
-    elif uploaded_file.name.endswith('.csv'):
-        df = pd.read_csv(uploaded_file)
-    else:
-        st.warning("Unsupported file format. Please upload a CSV or Excel file.")
-        df = None
-else:
-    #st.warning("No file uploaded. Using default CSV file.")
-    df = pd.read_csv("results.csv")
-
-
-
 
 
 #get selected item
