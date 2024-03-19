@@ -8,6 +8,9 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
+import streamlit as st
+import pandas as pd
+
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -35,15 +38,14 @@ def main():
         for col in categorical_columns:
             selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=['All'] + list(df[col].unique()),  # 'All' option added
-                default=['All']  # 'All' option selected by default
+                options=list(df[col].unique()),  # 'All' option removed
+                default=list(df[col].unique())   # All options selected by default
             )
 
         # Filter DataFrame based on selected criteria
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
-            if 'All' not in values:  # 'All' option selected, don't filter
-                filtered_df = filtered_df[filtered_df[col].isin(values)]
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
