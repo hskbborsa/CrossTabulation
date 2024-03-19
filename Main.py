@@ -8,8 +8,6 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
-
-
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -42,21 +40,23 @@ def main():
             options=list(df[first_criteria].unique()),
             default=list(df[first_criteria].unique())
         )
-        selected_criteria[second_criteria] = st.sidebar.multiselect(
+        selected_criteria[second_criteria] = st.sidebar.selectbox(
             label=f"Select {second_criteria}",
-            options=list(df[second_criteria].unique()),
-            default=list(df[second_criteria].unique())
+            options=['All'] + list(df[second_criteria].unique()),
+            index=0
         )
 
         # Filter DataFrame based on selected criteria
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
-            filtered_df = filtered_df[filtered_df[col].isin(values)]
+            if 'All' not in values:
+                filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
+
 
 
 #side bar: switcher
