@@ -58,7 +58,7 @@ if __name__ == "__main__":
 gender=st.sidebar.multiselect(
     label="Select Gender",
     options=df["gender"].unique(),
-    default=df["gender"].unique().
+    default=df["gender"].unique(),
     )
 
 stream=st.sidebar.multiselect(
