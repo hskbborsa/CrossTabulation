@@ -36,15 +36,15 @@ def main():
 
         selected_criteria = {}
         for col in categorical_columns:
-            selected_criteria[col] = st.sidebar.multiselect(
+            selected_criteria[col] = st.sidebar.selectbox(
                 label=f"Select {col}",
-                options=df[col].unique(),
-                default=df[col].unique()
+                options=df[col].unique()
             )
 
+        # Filter DataFrame based on selected criteria
         filtered_df = df.copy()
-        for col, values in selected_criteria.items():
-            filtered_df = filtered_df[filtered_df[col].isin(values)]
+        for col, value in selected_criteria.items():
+            filtered_df = filtered_df[filtered_df[col] == value]
 
         st.write(filtered_df)
 
