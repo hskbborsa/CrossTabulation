@@ -37,43 +37,32 @@ def main():
         # Seçim kriterleri için kategorik sütunları oluşturun
         selected_criteria = {}
         for col in categorical_columns:
-            selected_criteria[col] = st.sidebar.multiselect(
+            selected_values = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=list(df[col].unique()),  # 'All' seçeneği kaldırıldı
-                default=list(df[col].unique())   # Tüm seçenekler varsayılan olarak seçildi
+                options=df[col].unique(),
+                default=df[col].unique()
             )
+            selected_criteria[col] = selected_values
 
-        # Diğer seçenekleri dinamik olarak güncelleyin
-        for selected_col, selected_values in selected_criteria.items():
+        # Diğer seçenekleri güncelleyin
+        for selected_col in selected_criteria.keys():
             for col in categorical_columns:
-                if col != selected_col:  # Seçilen sütunu güncelleme
+                if col != selected_col:
+                    available_options = df[df[selected_col].isin(selected_criteria[selected_col])][col].unique()
                     selected_criteria[col] = st.sidebar.multiselect(
                         label=f"Select {col}",
-                        options=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Diğer seçenekleri güncelle
-                        default=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Tüm seçenekler varsayılan olarak seçildi
+                        options=available_options,
+                        default=available_options
                     )
 
-        # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
-        all_columns = df.columns.tolist()
-        show_columns = st.sidebar.multiselect(
-            label="Select columns to show",
-            options=all_columns,
-            default=all_columns  # Tüm sütunlar varsayılan olarak seçildi
-        )
-
-        # DataFrame'i seçilen kriterlere göre filtreleyin
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
             filtered_df = filtered_df[filtered_df[col].isin(values)]
-
-        # Yalnızca belirli sütunları gösterin
-        filtered_df = filtered_df[show_columns]
 
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
-
 
 #side bar: switcher
 gender=st.sidebar.multiselect(
