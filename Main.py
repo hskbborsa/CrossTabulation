@@ -8,6 +8,10 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
+import streamlit as st
+import pandas as pd
+from streamlit_dynamic_filters import DynamicFilters
+
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -29,27 +33,15 @@ def main():
     if df is not None:
         st.write("File loaded successfully.")
 
-        categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
+        dynamic_filters = DynamicFilters(df, filters=df.columns)
 
-        selected_criteria = {}
-        for col in categorical_columns:
-            selected_criteria[col] = st.sidebar.multiselect(
-                label=f"Select {col}",
-                options=df[col].unique(),
-                default=df[col].unique()
-            )
+        with st.sidebar:
+            dynamic_filters.display_filters()
 
-        filtered_df = df.copy()
-        for col, values in selected_criteria.items():
-            filtered_df = filtered_df[filtered_df[col].isin(values)]
-
-        st.write(filtered_df)
+        dynamic_filters.display_df()
 
 if __name__ == "__main__":
     main()
-
-
-
 
 
 
