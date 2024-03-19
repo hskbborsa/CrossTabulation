@@ -8,6 +8,9 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
+import streamlit as st
+import pandas as pd
+
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -44,10 +47,12 @@ def main():
         for selected_col, selected_values in selected_criteria.items():
             for col in categorical_columns:
                 if col != selected_col:  # Seçilen sütunu güncelleme
+                    widget_id = f"{selected_col}_{col}"  # Her bir çoklu seçim kutusu için farklı bir ID oluştur
                     selected_criteria[col] = st.sidebar.multiselect(
                         label=f"Select {col}",
                         options=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Diğer seçenekleri güncelle
-                        default=list(df[df[selected_col].isin(selected_values)][col].unique())   # Tüm seçenekler varsayılan olarak seçildi
+                        default=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Tüm seçenekler varsayılan olarak seçildi
+                        key=widget_id  # ID'yi belirt
                     )
 
         # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
