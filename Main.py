@@ -31,26 +31,30 @@ def main():
 
         categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
-        first_criteria = st.sidebar.selectbox("Select First Criteria", options=categorical_columns)
-        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=df.columns)
-
+        # Seçim kriterleri için kategorik sütunları oluşturun
         selected_criteria = {}
-        selected_criteria[first_criteria] = st.sidebar.multiselect(
-            label=f"Select {first_criteria}",
-            options=list(df[first_criteria].unique()),
-            default=list(df[first_criteria].unique())
-        )
-        selected_criteria[second_criteria] = st.sidebar.selectbox(
-            label=f"Select {second_criteria}",
-            options=['All'] + list(df[second_criteria].unique()),
-            index=0
+        for col in categorical_columns:
+            selected_criteria[col] = st.sidebar.multiselect(
+                label=f"Select {col}",
+                options=['All'] + list(df[col].unique()),  # 'All' seçeneği eklendi
+                default=['All']  # 'All' seçeneği varsayılan olarak seçildi
+            )
+
+        # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
+        show_columns = st.sidebar.multiselect(
+            label="Select columns to show",
+            options=df.columns,
+            default=df.columns
         )
 
-        # Filter DataFrame based on selected criteria
+        # DataFrame'i seçilen kriterlere göre filtreleyin
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
-            if 'All' not in values:
+            if 'All' not in values:  # 'All' seçeneği seçilmediyse
                 filtered_df = filtered_df[filtered_df[col].isin(values)]
+
+        # Yalnızca belirli sütunları gösterin
+        filtered_df = filtered_df[show_columns]
 
         st.write(filtered_df)
 
