@@ -12,6 +12,53 @@ UI()
 #result=viewData()
 #df=pd.DataFrame(result,columns=["name","gender","history","geography","kiswahili","civics","maths","total","average","grade","comment","rank","stream","id"])
 
+def load_data(file):
+    if file is not None:
+        if file.name.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(file)
+        elif file.name.endswith('.csv'):
+            df = pd.read_csv(file)
+        else:
+            st.warning("Unsupported file format. Please upload a CSV or Excel file.")
+            return None
+    else:
+        st.warning("No file uploaded. Using default CSV file.")
+        df = pd.read_csv("results.csv")
+    return df
+
+def get_categorical_columns(df):
+    categorical_columns = []
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            categorical_columns.append(col)
+    return categorical_columns
+
+def main():
+    uploaded_file = st.sidebar.file_uploader("Choose a file")
+    df = load_data(uploaded_file)
+
+    if df is not None:
+        st.write("File loaded successfully.")
+
+        categorical_columns = get_categorical_columns(df)
+
+        first_criteria = st.sidebar.selectbox("Select First Criteria", options=categorical_columns)
+        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=df.columns)
+
+        # Apply filters
+        filtered_df = df.copy()
+        if first_criteria:
+            filtered_df = filtered_df[filtered_df[first_criteria].isin(df[first_criteria].unique())]
+
+        st.write(filtered_df)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
 df=pd.read_csv("results.csv")
 
 #side bar: switcher
