@@ -45,7 +45,7 @@ if uploaded_file is not None:
         st.warning("Unsupported file format. Please upload a CSV or Excel file.")
         df = None
 else:
-    st.warning("No file uploaded. Using default CSV file.")
+    #st.warning("No file uploaded. Using default CSV file.")
     df = pd.read_csv("results.csv")
 
 if df is not None:
