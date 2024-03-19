@@ -48,11 +48,7 @@ else:
     #st.warning("No file uploaded. Using default CSV file.")
     df = pd.read_csv("results.csv")
 
-if df is not None:
-    st.write("File loaded successfully.")
-    # Do something with the dataframe if needed
-    # For example, display the dataframe
-    st.write(df)
+
 
 
 
