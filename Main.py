@@ -7,23 +7,50 @@ from query import *
 st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
-import streamlit as st
-from streamlit_dynamic_filters import DynamicFilters
 
-data = {
-    'Region': ['North America', 'North America', 'North America', 'Europe', 'Europe', 'Asia', 'Asia'],
-    'Country': ['USA', 'USA', 'Canada', 'Germany', 'France', 'Japan', 'China'],
-    'City': ['New York', 'Los Angeles', 'Toronto', 'Berlin', 'Paris', 'Tokyo', 'Beijing']
-    }
+def load_data(file):
+    if file is not None:
+        if file.name.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(file)
+        elif file.name.endswith('.csv'):
+            df = pd.read_csv(file)
+        else:
+            st.warning("Unsupported file format. Please upload a CSV or Excel file.")
+            return None
+    else:
+        st.warning("No file uploaded. Using default CSV file.")
+        df = pd.read_csv("results.csv")
+    return df
 
-df = pd.DataFrame(data)
+def main():
+    uploaded_file = st.sidebar.file_uploader("Choose a file")
+    df = load_data(uploaded_file)
 
-dynamic_filters = DynamicFilters(df, filters=['Region', 'Country', 'City'])
+    if df is not None:
+        st.write("File loaded successfully.")
 
-with st.sidebar:
-    dynamic_filters.display_filters()
+        categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
-dynamic_filters.display_df()
+        selected_criteria = {}
+        for col in categorical_columns:
+            selected_criteria[col] = st.sidebar.multiselect(
+                label=f"Select {col}",
+                options=df[col].unique(),
+                default=df[col].unique()
+            )
+
+        filtered_df = df.copy()
+        for col, values in selected_criteria.items():
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
+
+        st.write(filtered_df)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
 
 
 #side bar: switcher
