@@ -8,8 +8,7 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
-import streamlit as st
-import pandas as pd
+
 
 def load_data(file):
     if file is not None:
@@ -34,21 +33,25 @@ def main():
 
         categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
+        first_criteria = st.sidebar.selectbox("Select First Criteria", options=categorical_columns)
+        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=df.columns)
+
         selected_criteria = {}
-        for col in categorical_columns:
-            options = list(df[col].unique())
-            default = options if options else None  # If options is empty, default to None
-            selected_criteria[col] = st.sidebar.multiselect(
-                label=f"Select {col}",
-                options=options,
-                default=default
-            )
+        selected_criteria[first_criteria] = st.sidebar.multiselect(
+            label=f"Select {first_criteria}",
+            options=list(df[first_criteria].unique()),
+            default=list(df[first_criteria].unique())
+        )
+        selected_criteria[second_criteria] = st.sidebar.multiselect(
+            label=f"Select {second_criteria}",
+            options=list(df[second_criteria].unique()),
+            default=list(df[second_criteria].unique())
+        )
 
         # Filter DataFrame based on selected criteria
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
-            if values:  # If values is not empty
-                filtered_df = filtered_df[filtered_df[col].isin(values)]
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
