@@ -34,7 +34,6 @@ def main():
 
         categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
 
-        # Seçim kriterleri için kategorik sütunları oluşturun
         selected_criteria = {}
         for col in categorical_columns:
             selected_values = st.sidebar.multiselect(
@@ -45,20 +44,18 @@ def main():
             )
             selected_criteria[col] = selected_values
 
-        # Diğer seçim kutularının içeriğini güncelleyin
-        for selected_col in selected_criteria.keys():
-            available_options = df[df[selected_col].isin(selected_criteria[selected_col])]
-            for col in categorical_columns:
-                if col != selected_col:
-                    available_options = available_options[available_options[col].isin(selected_criteria[col])]
-            for col in categorical_columns:
-                if col != selected_col:
-                    selected_criteria[col] = st.sidebar.multiselect(
-                        label=f"Select {col}",
-                        options=available_options[col].unique(),
-                        default=available_options[col].unique(),
-                        key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
-                    )
+        for col in categorical_columns:
+            filtered_df = df.copy()
+            for other_col in categorical_columns:
+                if col != other_col:
+                    filtered_df = filtered_df[filtered_df[other_col].isin(selected_criteria[other_col])]
+            options = filtered_df[col].unique()
+            selected_criteria[col] = st.sidebar.multiselect(
+                label=f"Select {col}",
+                options=options,
+                default=options if options.any() else df[col].unique(),
+                key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
+            )
 
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
@@ -68,6 +65,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
