@@ -12,6 +12,9 @@ UI()
 #result=viewData()
 #df=pd.DataFrame(result,columns=["name","gender","history","geography","kiswahili","civics","maths","total","average","grade","comment","rank","stream","id"])
 
+import streamlit as st
+import pandas as pd
+
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -37,16 +40,11 @@ def main():
 
         selected_criteria = {}
         for col in categorical_columns:
-            unique_values = df[col].unique()
-            visible_values = unique_values[:2]
-            other_values = unique_values[2:]
             selected_values = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=visible_values + ['(Select All)' if len(other_values) > 0 else ''],
-                default=visible_values,
+                options=df[col].unique(),
+                default=df[col].unique(),
             )
-            if '(Select All)' in selected_values:
-                selected_values = other_values
             selected_criteria[col] = selected_values
 
         second_criteria = st.sidebar.selectbox("Select Second Criteria", options=[''] + df.columns.tolist())
