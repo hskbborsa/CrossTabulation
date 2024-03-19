@@ -40,7 +40,8 @@ def main():
             selected_values = st.sidebar.multiselect(
                 label=f"Select {col}",
                 options=df[col].unique(),
-                default=df[col].unique()
+                default=df[col].unique(),
+                key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
             )
             selected_criteria[col] = selected_values
 
@@ -52,7 +53,8 @@ def main():
                     selected_criteria[col] = st.sidebar.multiselect(
                         label=f"Select {col}",
                         options=available_options,
-                        default=available_options
+                        default=available_options,
+                        key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
                     )
 
         filtered_df = df.copy()
@@ -63,6 +65,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 #side bar: switcher
 gender=st.sidebar.multiselect(
