@@ -36,22 +36,22 @@ def main():
         for col in categorical_columns:
             selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=['All'] + list(df[col].unique()),  # 'All' seçeneği eklendi
-                default=['All']  # 'All' seçeneği varsayılan olarak seçildi
+                options=list(df[col].unique()),  # 'All' seçeneği kaldırıldı
+                default=list(df[col].unique())   # Tüm seçenekler varsayılan olarak seçildi
             )
 
         # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
+        all_columns = df.columns.tolist()
         show_columns = st.sidebar.multiselect(
             label="Select columns to show",
-            options=df.columns,
-            default=df.columns
+            options=all_columns,
+            default=all_columns  # Tüm sütunlar varsayılan olarak seçildi
         )
 
         # DataFrame'i seçilen kriterlere göre filtreleyin
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
-            if 'All' not in values:  # 'All' seçeneği seçilmediyse
-                filtered_df = filtered_df[filtered_df[col].isin(values)]
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         # Yalnızca belirli sütunları gösterin
         filtered_df = filtered_df[show_columns]
