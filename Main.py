@@ -25,6 +25,13 @@ def load_data(file):
         df = pd.read_csv("results.csv")
     return df
 
+def get_categorical_columns(df):
+    categorical_columns = []
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            categorical_columns.append(col)
+    return categorical_columns
+
 def main():
     uploaded_file = st.sidebar.file_uploader("Choose a file")
     df = load_data(uploaded_file)
@@ -32,44 +39,15 @@ def main():
     if df is not None:
         st.write("File loaded successfully.")
 
-        categorical_columns = [col for col in df.columns if df[col].dtype == 'object']
+        categorical_columns = get_categorical_columns(df)
 
-        # Seçim kriterleri için kategorik sütunları oluşturun
-        selected_criteria = {}
-        for col in categorical_columns:
-            selected_criteria[col] = st.sidebar.multiselect(
-                label=f"Select {col}",
-                options=list(df[col].unique()),  # 'All' seçeneği kaldırıldı
-                default=list(df[col].unique())   # Tüm seçenekler varsayılan olarak seçildi
-            )
+        first_criteria = st.sidebar.selectbox("Select First Criteria", options=categorical_columns)
+        second_criteria = st.sidebar.selectbox("Select Second Criteria", options=df.columns)
 
-        # Diğer seçenekleri dinamik olarak güncelleyin
-        for selected_col, selected_values in selected_criteria.items():
-            for col in categorical_columns:
-                if col != selected_col:  # Seçilen sütunu güncelleme
-                    widget_id = f"{selected_col}_{col}"  # Her bir çoklu seçim kutusu için farklı bir ID oluştur
-                    selected_criteria[col] = st.sidebar.multiselect(
-                        label=f"Select {col}",
-                        options=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Diğer seçenekleri güncelle
-                        default=list(df[df[selected_col].isin(selected_values)][col].unique()),  # Tüm seçenekler varsayılan olarak seçildi
-                        key=widget_id  # ID'yi belirt
-                    )
-
-        # Sütun başlıklarının gösterilip gösterilmeyeceğini belirleyin
-        all_columns = df.columns.tolist()
-        show_columns = st.sidebar.multiselect(
-            label="Select columns to show",
-            options=all_columns,
-            default=all_columns  # Tüm sütunlar varsayılan olarak seçildi
-        )
-
-        # DataFrame'i seçilen kriterlere göre filtreleyin
+        # Apply filters
         filtered_df = df.copy()
-        for col, values in selected_criteria.items():
-            filtered_df = filtered_df[filtered_df[col].isin(values)]
-
-        # Yalnızca belirli sütunları gösterin
-        filtered_df = filtered_df[show_columns]
+        if first_criteria:
+            filtered_df = filtered_df[filtered_df[first_criteria].isin(df[first_criteria].unique())]
 
         st.write(filtered_df)
 
