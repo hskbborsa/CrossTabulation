@@ -36,22 +36,24 @@ def main():
 
         selected_criteria = {}
         for col in categorical_columns:
+            options = list(df[col].unique())
+            default = options if options else None  # If options is empty, default to None
             selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=list(df[col].unique()),  # 'All' option removed
-                default=list(df[col].unique())   # All options selected by default
+                options=options,
+                default=default
             )
 
         # Filter DataFrame based on selected criteria
         filtered_df = df.copy()
         for col, values in selected_criteria.items():
-            filtered_df = filtered_df[filtered_df[col].isin(values)]
+            if values:  # If values is not empty
+                filtered_df = filtered_df[filtered_df[col].isin(values)]
 
         st.write(filtered_df)
 
 if __name__ == "__main__":
     main()
-
 
 
 #side bar: switcher
