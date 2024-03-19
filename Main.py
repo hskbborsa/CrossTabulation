@@ -8,9 +8,6 @@ st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
 
-import streamlit as st
-import pandas as pd
-
 def load_data(file):
     if file is not None:
         if file.name.endswith(('.xls', '.xlsx')):
@@ -36,25 +33,10 @@ def main():
 
         selected_criteria = {}
         for col in categorical_columns:
-            selected_values = st.sidebar.multiselect(
-                label=f"Select {col}",
-                options=df[col].unique(),
-                default=df[col].unique(),
-                key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
-            )
-            selected_criteria[col] = selected_values
-
-        for col in categorical_columns:
-            filtered_df = df.copy()
-            for other_col in categorical_columns:
-                if col != other_col:
-                    filtered_df = filtered_df[filtered_df[other_col].isin(selected_criteria[other_col])]
-            options = filtered_df[col].unique()
             selected_criteria[col] = st.sidebar.multiselect(
                 label=f"Select {col}",
-                options=options,
-                default=options if options.any() else df[col].unique(),
-                key=f"{col}_multiselect"  # Benzersiz bir key parametresi ekle
+                options=df[col].unique(),
+                default=df[col].unique()
             )
 
         filtered_df = df.copy()
@@ -65,6 +47,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
