@@ -49,7 +49,7 @@ else:
     df = pd.read_csv("results.csv")
 
 if df is not None:
-    st.write("File loaded successfully.")
+    st.write(uploaded_file.name)
     # Do something with the dataframe if needed
     # For example, display the dataframe
     st.write(df)
