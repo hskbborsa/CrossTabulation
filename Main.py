@@ -1,12 +1,35 @@
 import streamlit as st
 import pandas as pd 
-#uncomment this line for mysql
 from query import *
-
+from streamlit_dynamic_filters import DynamicFilters
 #set page
 st.set_page_config(page_title="Bilgi Paneli",page_icon="🌓",layout="wide")
 UI()
 #####
+# Sample data
+data = {
+    'region': ['North America', 'North America', 'Europe', 'Oceania',
+               'North America', 'North America', 'Europe', 'Oceania',
+               'North America', 'North America', 'Europe', 'Oceania'],
+    'country': ['USA', 'Canada', 'UK', 'Australia',
+                'USA', 'Canada', 'UK', 'Australia',
+                'USA', 'Canada', 'UK', 'Australia'],
+    'city': ['New York', 'Toronto', 'London', 'Sydney',
+             'New York', 'Toronto', 'London', 'Sydney',
+             'New York', 'Toronto', 'London', 'Sydney'],
+    'district': ['Manhattan', 'Downtown', 'Westminster', 'CBD',
+                 'Brooklyn', 'Midtown', 'Kensington', 'Circular Quay',
+                 'Queens', 'Uptown', 'Camden', 'Bondi']
+}
+df1 = pd.DataFrame(data)
+
+
+dynamic_filters = DynamicFilters(df=df1, filters=['Region', 'Country', 'City', 'District'])
+
+
+dynamic_filters.display_filters()
+dynamic_filters.display_df()
+
 
 def load_data(file):
     if file is not None:
